@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <link rel ='stylesheet' href='/css/style.css'>
+    </head>
+    <body>
+        {{>header}}
+        <br/>
+        <form id ='addNoteForm'>
+            <br/>
+            <input id = "titleadd" placeholder="Title">
+            <input id = "notebody" placeholder="Note Body">
+            <button id ='addNote'>Add Note</button>
+            <p id = "messageadd"></p>
+        </form>
+         <form id ='removeNoteForm'>
+            <input id = "titleremove" placeholder="Title">
+            <button id ='removeNote'>Remove Note</button>
+            <p id = "messageremove"></p>
+        </form>
+        <form id ='readNoteForm'>
+            <input id = "titleread" placeholder="Title">
+            <button id ='readNote'>Read Note</button>
+            <p id = "messageread"></p>
+        </form>
+        <form id ='listNoteForm'>
+            <button id ='listNote'>List Note</button>
+            <p id = "messagelist"></p>
+        </form>
+
+        <script src="/js/app.js"></script>
+    </body>
+</html>
