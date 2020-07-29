@@ -4,7 +4,6 @@ const hbs = require('hbs')
 const note = require('./notes.js')
 const { title } = require('process')
 const mongodb = require('./mongodb.js')
-
 const app = express()
 console.log()
 app.use(express.static(path.join(__dirname,"../public")))
@@ -33,25 +32,50 @@ app.get('/addNote',(req, res)=>{
             message : 'Provide title and notebody to add new note' 
         })
     }
-
-    mongodb.createNote(req.query.title,req.query.notebody)
-    res.send({
-        message : "Note Added !!!" 
+    mongodb.readNote(req.query.title).then((note)=>{
+        if(!note){
+            return mongodb.createNote(req.query.title, req.query.notebody)
+        }else{
+            return res.send({
+                message : "Note already taken"
+            })
+        }
+    }).then((note)=>{
+        return res.send({
+            message : "Note Added"
+        })
+    }).catch((error)=>{
+       return res.send({
+            message : "Error occured" 
+        })
     })
 })
 
 app.get('/removeNote',(req, res)=>{
-    
+
     if(!req.query.title){
         return res.send({
             message : 'Provide title to remove Note' 
         })
     }
-
-    mongodb.deleteNote(title)
-    res.send({
-        message : "Note Removed !!!"
+    mongodb.readNote(req.query.title).then((note)=>{
+        if(note){
+            return mongodb.deleteNote(req.query.title)
+        }else{
+            return res.send({
+                message : "Note doesn't exist"
+            })
+        }
+    }).then((note)=>{
+        return res.send({
+            message : "Note Removed"
+        })
+    }).catch((error)=>{
+       return res.send({
+            message : "Error occured" 
+        })
     })
+
 })
 
 app.get('/readNote',(req, res)=>{
@@ -61,19 +85,43 @@ app.get('/readNote',(req, res)=>{
             message : 'Provide title to read Note' 
         })
     }
-
-    const message = mongodb.readNote(title)
-    res.send({
-        message
+    mongodb.readNote(req.query.title).then((note)=>{
+        if(note){
+            return res.send({
+                message : note
+            })
+        }else {
+            return res.send({
+                message : "Note not found"
+            })
+        }
+        
+    }).catch((error)=>{
+        return res.send({
+            message : "Error occured"
+        })
     })
+   
 })
 
 app.get('/listNote',(req, res)=>{
-
-    let notes = note.listAllNotes()  
-    res.send({
-        message : notes 
+    mongodb.readAllNotes().then((notes)=>{
+        if(notes){
+            return res.send({
+                message : notes
+            })
+        }else {
+            return res.send({
+                message : "No Note not found"
+            })
+        }
+    }).catch((error)=>{
+        console.log(error);
+        return res.send({
+            message : "Error occured"
+        })
     })
+
 })
 
 app.listen(3000,()=>{
